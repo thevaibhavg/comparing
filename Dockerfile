@@ -1,29 +1,46 @@
-# Use official Python base image
+# Use Python base image
 FROM python:3.10-slim
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# Install dependencies
-RUN apt-get update && apt-get install -y wget gnupg libglib2.0-0 libnss3 libgconf-2-4 libatk1.0-0 libatk-bridge2.0-0 libx11-xcb1 libxcomposite1 libxdamage1 libxrandr2 libasound2 libpangocairo-1.0-0 libgtk-3-0
-
-# Set workdir
+# Set working directory
 WORKDIR /app
 
-# Copy files
+# Install OS dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    gnupg \
+    unzip \
+    fonts-liberation \
+    libasound2 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdbus-1-3 \
+    libdrm2 \
+    libgbm1 \
+    libgtk-3-0 \
+    libnspr4 \
+    libnss3 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxrandr2 \
+    xdg-utils \
+    libu2f-udev \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install pip dependencies
 COPY requirements.txt .
-COPY setup_playwright.py .
-COPY src ./src
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Python dependencies
-RUN pip install --upgrade pip && pip install -r requirements.txt
+# Install Playwright and its browsers
+RUN pip install playwright && playwright install --with-deps
 
-# Install Playwright and Chromium
-RUN python setup_playwright.py
+# Copy app files
+COPY . .
 
-# Expose port
+# Expose Streamlit port
 EXPOSE 7860
 
-# Run Streamlit app
+# Run the Streamlit app
 CMD ["streamlit", "run", "src/streamlit_app.py", "--server.port=7860", "--server.address=0.0.0.0"]
