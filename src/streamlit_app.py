@@ -6,9 +6,9 @@ st.set_page_config(page_title="Grocery Price Compare", layout="centered")
 st.title("🛒 Grocery Price Comparison")
 
 products = [
-    "Amul Salted Butter 200g",
-    "Veeba Tomato Ketchup Chef's Special 900g",
-    "Coca Cola Soft Drink 2L"
+    "Amul Salted Butter",
+    "Veeba Tomato Ketchup Chef's Special",
+    "Coca Cola Soft Drink"
 ]
 
 location = st.text_input("📍 Enter Your Pincode (default: 122001)", "122001")
